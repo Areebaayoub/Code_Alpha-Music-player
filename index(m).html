@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="style(m).css">
+    <script src="https://kit.fontawesome.com/73a143681b.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="music-player">
+            <nav>
+                <div class="circle">
+                    <i class="fa-solid fa-angle-left" id="prev"></i>
+                </div>
+                <div class="circle">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </nav>
+            <img src="images/thumbnail1.jpg" class="song-img" id="songImg">
+            <h1 id="songTitle">Heat Waves</h1>
+            <p id="artistName">Glass Animals ft Iann Dior</p>
+            
+            <!-- Audio Element -->
+            <audio id="song">
+                <source src="images/Heat-Waves-Glass-Animals.mp3" type="audio/mpeg">
+            </audio>
+            <input type="range" value="0" id="progress">
+            
+            <!-- Controls -->
+            <div class="controls">
+                <div id="prevBtn"><i class="fa-solid fa-backward"></i></div>
+                <div onclick="playPause()">
+                    <i class="fa-solid fa-play" id="ctrlIcon"></i>
+                </div>
+                <div id="nextBtn"><i class="fa-solid fa-forward"></i></div>
+            </div>
+
+            <!-- Buttons to Switch Songs -->
+            <div class="song-buttons">
+                <button onclick="changeSong('images/Heat-Waves-Glass-Animals.mp3', 'Heat Waves', 'Glass Animals ft Iann Dior')">Play "Heat Waves"</button>
+                <button onclick="changeSong('images/I-Wanna-Be-Yours.mp3', 'I Wanna Be Yours', 'Arctic Monkeys')">Play "I Wanna Be Yours"</button>
+                <button onclick="changeSong('images/BAARISHEIN.mp3', 'BAARISHEIN', 'Anuv Jain')">Play "BAARISHEIN"</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let progress = document.getElementById("progress");
+        let song = document.getElementById("song");
+        let ctrlIcon = document.getElementById("ctrlIcon");
+
+        let songs = [
+            { src: 'images/Heat-Waves-Glass-Animals.mp3', title: 'Heat Waves', artist: 'Glass Animals ft Iann Dior' },
+            { src: 'images/I-Wanna-Be-Yours.mp3', title: 'I Wanna Be Yours', artist: 'Arctic Monkeys' },
+            { src: 'images/BAARISHEIN.mp3', title: 'BAARISHEIN', artist: 'Anuv Jain' },
+            // Add more songs here if needed
+        ];
+
+        let currentSongIndex = 0; // Start with the first song
+
+        // Set initial song
+        function playSong(index) {
+            song.src = songs[index].src;
+            song.play();
+            ctrlIcon.classList.remove("fa-play");
+            ctrlIcon.classList.add("fa-pause");
+            document.getElementById("songTitle").textContent = songs[index].title;
+            document.getElementById("artistName").textContent = songs[index].artist;
+        }
+
+        song.onloadedmetadata = function() {
+            progress.max = song.duration;
+            progress.value = song.currentTime;
+        };
+
+        function playPause() {
+            if (ctrlIcon.classList.contains("fa-pause")) {
+                song.pause();
+                ctrlIcon.classList.remove("fa-pause");
+                ctrlIcon.classList.add("fa-play");
+            } else {
+                ctrlIcon.classList.remove("fa-play");
+                ctrlIcon.classList.add("fa-pause");
+                song.play();
+            }
+        }
+
+        song.addEventListener('timeupdate', function() {
+            progress.value = song.currentTime;
+        });
+
+        progress.onchange = function() {
+            song.currentTime = progress.value;
+            if (!song.paused) {
+                ctrlIcon.classList.remove("fa-play");
+                ctrlIcon.classList.add("fa-pause");
+            }
+        };
+
+        // Change the song based on song index
+        function changeSong(songPath, title, artist) {
+            song.src = songPath;
+            song.play();
+            ctrlIcon.classList.remove("fa-play");
+            ctrlIcon.classList.add("fa-pause");
+            document.getElementById("songTitle").textContent = title;
+            document.getElementById("artistName").textContent = artist;
+        }
+
+        // Next and Previous button functionality
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            currentSongIndex = (currentSongIndex + 1) % songs.length; // Loop back to the first song
+            playSong(currentSongIndex);
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length; // Loop to the last song
+            playSong(currentSongIndex);
+        });
+
+        // Initialize the player with the first song
+        playSong(currentSongIndex);
+        song.addEventListener('play', function() {
+    document.getElementById('songImg').classList.add('playing');
+});
+
+song.addEventListener('pause', function() {
+    document.getElementById('songImg').classList.remove('playing');
+});
+    </script>
+</body>
+</html>
